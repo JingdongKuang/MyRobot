@@ -1,38 +1,33 @@
 #include "MockTransport.h"
+#include "Protocol.h"
 
 #include <stdexcept>
 
 namespace myservo
 {
-namespace
-{
-constexpr std::uint8_t kFrameHeader = 0xAA;
-constexpr std::size_t kMinFrameSize = 5;
-}
+	std::vector<std::uint8_t> MockTransport::Transfer(const std::vector<std::uint8_t>& request)
+	{
+		if (request.size() < protocol::kMinFrameSize)
+		{
+			throw std::runtime_error("request too short");
+		}
+		if (request[0] != protocol::kFrameHeader)
+		{
+			throw std::runtime_error("invalid request header");
+		}
 
-std::vector<std::uint8_t> MockTransport::Transfer(const std::vector<std::uint8_t>& request)
-{
-if (request.size() < kMinFrameSize)
-{
-throw std::runtime_error("request too short");
-}
-if (request[0] != kFrameHeader)
-{
-throw std::runtime_error("invalid request header");
-}
+		const auto payloadLength = static_cast<std::size_t>(request[3]);
+		const auto expectedSize = protocol::kMinFrameSize + payloadLength;
+		if (request.size() != expectedSize)
+		{
+			throw std::runtime_error("request size mismatch");
+		}
 
-const auto payloadLength = static_cast<std::size_t>(request[3]);
-const auto expectedSize = kMinFrameSize + payloadLength;
-if (request.size() != expectedSize)
-{
-throw std::runtime_error("request size mismatch");
-}
-
-std::vector<std::uint8_t> withoutChecksum(request.begin(), request.end() - 1);
-if (request.back() != Checksum(withoutChecksum))
-{
-throw std::runtime_error("request checksum mismatch");
-}
+		std::vector<std::uint8_t> withoutChecksum(request.begin(), request.end() - 1);
+		if (request.back() != protocol::Checksum(withoutChecksum))
+		{
+			throw std::runtime_error("request checksum mismatch");
+		}
 
 const auto id = request[1];
 const auto cmd = static_cast<Command>(request[2]);
@@ -59,29 +54,19 @@ default:
 throw std::runtime_error("unsupported command");
 }
 
-return BuildResponse(id, cmd, payload);
-}
+		return BuildResponse(id, cmd, payload);
+	}
 
-std::uint8_t MockTransport::Checksum(const std::vector<std::uint8_t>& frame) const
-{
-std::uint8_t sum = 0;
-for (auto byte : frame)
-{
-sum = static_cast<std::uint8_t>(sum + byte);
-}
-return static_cast<std::uint8_t>(~sum);
-}
-
-std::vector<std::uint8_t> MockTransport::BuildResponse(std::uint8_t id, Command cmd, const std::vector<std::uint8_t>& payload) const
-{
-std::vector<std::uint8_t> response;
-response.reserve(kMinFrameSize + payload.size());
-response.push_back(kFrameHeader);
-response.push_back(id);
-response.push_back(static_cast<std::uint8_t>(cmd));
-response.push_back(static_cast<std::uint8_t>(payload.size()));
-response.insert(response.end(), payload.begin(), payload.end());
-response.push_back(Checksum(response));
-return response;
-}
+	std::vector<std::uint8_t> MockTransport::BuildResponse(std::uint8_t id, Command cmd, const std::vector<std::uint8_t>& payload) const
+	{
+		std::vector<std::uint8_t> response;
+		response.reserve(protocol::kMinFrameSize + payload.size());
+		response.push_back(protocol::kFrameHeader);
+		response.push_back(id);
+		response.push_back(static_cast<std::uint8_t>(cmd));
+		response.push_back(static_cast<std::uint8_t>(payload.size()));
+		response.insert(response.end(), payload.begin(), payload.end());
+		response.push_back(protocol::Checksum(response));
+		return response;
+	}
 }

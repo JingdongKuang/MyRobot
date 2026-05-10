@@ -1,17 +1,12 @@
 #include "ServoController.h"
+#include "Protocol.h"
 
 #include <stdexcept>
 
 namespace myservo
 {
-namespace
-{
-constexpr std::uint8_t kFrameHeader = 0xAA;
-constexpr std::size_t kMinFrameSize = 5;
-}
-
-ServoController::ServoController(std::shared_ptr<ITransport> transport)
-: m_transport(std::move(transport))
+	ServoController::ServoController(std::shared_ptr<ITransport> transport)
+		: m_transport(std::move(transport))
 {
 if (!m_transport)
 {
@@ -64,15 +59,15 @@ throw std::invalid_argument("payload too large");
 }
 
 std::vector<std::uint8_t> frame;
-frame.reserve(kMinFrameSize + payload.size());
-frame.push_back(kFrameHeader);
+		frame.reserve(protocol::kMinFrameSize + payload.size());
+		frame.push_back(protocol::kFrameHeader);
 frame.push_back(id);
-frame.push_back(static_cast<std::uint8_t>(cmd));
-frame.push_back(static_cast<std::uint8_t>(payload.size()));
-frame.insert(frame.end(), payload.begin(), payload.end());
-frame.push_back(Checksum(frame));
-return frame;
-}
+		frame.push_back(static_cast<std::uint8_t>(cmd));
+		frame.push_back(static_cast<std::uint8_t>(payload.size()));
+		frame.insert(frame.end(), payload.begin(), payload.end());
+		frame.push_back(protocol::Checksum(frame));
+		return frame;
+	}
 
 std::vector<std::uint8_t> ServoController::Send(std::uint8_t id, Command cmd, const std::vector<std::uint8_t>& payload) const
 {
@@ -84,14 +79,14 @@ return response;
 
 void ServoController::ValidateResponse(std::uint8_t expectedId, Command expectedCmd, const std::vector<std::uint8_t>& response) const
 {
-if (response.size() < kMinFrameSize)
-{
-throw std::runtime_error("response too short");
-}
-if (response[0] != kFrameHeader)
-{
-throw std::runtime_error("invalid response header");
-}
+		if (response.size() < protocol::kMinFrameSize)
+		{
+			throw std::runtime_error("response too short");
+		}
+		if (response[0] != protocol::kFrameHeader)
+		{
+			throw std::runtime_error("invalid response header");
+		}
 if (response[1] != expectedId)
 {
 throw std::runtime_error("response servo id mismatch");
@@ -99,30 +94,20 @@ throw std::runtime_error("response servo id mismatch");
 if (response[2] != static_cast<std::uint8_t>(expectedCmd))
 {
 throw std::runtime_error("response command mismatch");
+		}
+
+		const auto payloadLength = static_cast<std::size_t>(response[3]);
+		const auto expectedSize = protocol::kMinFrameSize + payloadLength;
+		if (response.size() != expectedSize)
+		{
+			throw std::runtime_error("response size mismatch");
 }
 
-const auto payloadLength = static_cast<std::size_t>(response[3]);
-const auto expectedSize = kMinFrameSize + payloadLength;
-if (response.size() != expectedSize)
-{
-throw std::runtime_error("response size mismatch");
-}
-
-const auto checksum = response.back();
-std::vector<std::uint8_t> withoutChecksum(response.begin(), response.end() - 1);
-if (checksum != Checksum(withoutChecksum))
-{
-throw std::runtime_error("response checksum mismatch");
-}
-}
-
-std::uint8_t ServoController::Checksum(const std::vector<std::uint8_t>& frame) const
-{
-std::uint8_t sum = 0;
-for (auto byte : frame)
-{
-sum = static_cast<std::uint8_t>(sum + byte);
-}
-return static_cast<std::uint8_t>(~sum);
-}
+		const auto checksum = response.back();
+		std::vector<std::uint8_t> withoutChecksum(response.begin(), response.end() - 1);
+		if (checksum != protocol::Checksum(withoutChecksum))
+		{
+			throw std::runtime_error("response checksum mismatch");
+		}
+	}
 }
