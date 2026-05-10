@@ -1,0 +1,1 @@
+/usr/bin/c++ -Wl,--dependency-file=CMakeFiles/MyRobot.dir/link.d CMakeFiles/MyRobot.dir/MyRobot.cpp.o -o MyRobot  myFilter/libmyfilter.a
