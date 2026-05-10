@@ -9,21 +9,22 @@
 
 int main()
 {
-using myservo::MockTransport;
-using myservo::ServoController;
-constexpr std::uint16_t kTestPosition = 420;
+	using myservo::MockTransport;
+	using myservo::ServoController;
+	constexpr std::uint16_t kMidRangeTestPosition = 420;
+	constexpr std::uint16_t kOutOfRangePosition = 1001;
 
 auto transport = std::make_shared<MockTransport>();
 ServoController servo(transport);
 
-assert(servo.Ping(1));
-servo.SetPosition(1, kTestPosition);
-assert(servo.ReadPosition(1) == kTestPosition);
+	assert(servo.Ping(1));
+	servo.SetPosition(1, kMidRangeTestPosition);
+	assert(servo.ReadPosition(1) == kMidRangeTestPosition);
 
 bool threwOutOfRange = false;
-try
-{
-servo.SetPosition(1, 1001);
+	try
+	{
+		servo.SetPosition(1, kOutOfRangePosition);
 }
 catch (const std::out_of_range&)
 {
