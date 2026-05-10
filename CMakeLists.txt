@@ -15,6 +15,10 @@ option(BUILD_APP "Build MyRobot executable" ON)
 option(BUILD_MYFILTER_TESTS "Build myfilter tests" ON)
 option(BUILD_SERVO_TESTS "Build servo tests" ON)
 
+if (BUILD_MYFILTER_TESTS OR BUILD_SERVO_TESTS)
+  enable_testing()
+endif()
+
 # 指定Eigen库的路径（必须在 add_subdirectory 之前）
 if (NOT EIGEN3_INCLUDE_DIR)
   set(EIGEN3_INCLUDE_DIR "F:/externalLib/cpp/eigen-3.4.0")#此处不能用\,只能用/
@@ -40,8 +44,4 @@ if (BUILD_APP)
 
   # 将Eigen库链接到项目中
   target_include_directories(MyRobot PRIVATE ${EIGEN3_INCLUDE_DIR})
-endif()
-
-if (BUILD_MYFILTER_TESTS OR BUILD_SERVO_TESTS)
-  enable_testing()
 endif()
