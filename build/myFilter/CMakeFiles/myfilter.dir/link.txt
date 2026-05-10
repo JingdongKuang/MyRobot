@@ -1,2 +1,0 @@
-/usr/bin/ar qc libmyfilter.a CMakeFiles/myfilter.dir/FIRFilter.cpp.o CMakeFiles/myfilter.dir/IIRFilter.cpp.o CMakeFiles/myfilter.dir/KalmanFilter.cpp.o CMakeFiles/myfilter.dir/filterExport.cpp.o CMakeFiles/myfilter.dir/otherFilter.cpp.o
-/usr/bin/ranlib libmyfilter.a
