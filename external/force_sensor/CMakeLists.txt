@@ -1,0 +1,6 @@
+# force_sensor 库：对接力/力矩传感器
+file(GLOB FORCE_SENSOR_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp" "${CMAKE_CURRENT_SOURCE_DIR}/*.c")
+file(GLOB FORCE_SENSOR_HEADERS "${CMAKE_CURRENT_SOURCE_DIR}/*.h" "${CMAKE_CURRENT_SOURCE_DIR}/*.hpp")
+
+add_library(force_sensor STATIC ${FORCE_SENSOR_SOURCES} ${FORCE_SENSOR_HEADERS})
+target_include_directories(force_sensor PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
