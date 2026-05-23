@@ -13,6 +13,7 @@
 
 #include <algorithm>
 #include <chrono>
+#include <cinttypes>
 #include <cmath>
 #include <cstdint>
 #include <functional>
@@ -55,6 +56,11 @@ public:
       throw std::invalid_argument("joint_ids must not be empty");
     }
     if (jointNames.size() != jointIds64.size()) {
+      RCLCPP_WARN(
+        this->get_logger(),
+        "joint_names size (%zu) != joint_ids size (%zu), auto-generating joint names",
+        jointNames.size(),
+        jointIds64.size());
       jointNames.resize(jointIds64.size());
       for (std::size_t i = 0; i < jointNames.size(); ++i) {
         jointNames[i] = "joint" + std::to_string(i + 1);
@@ -64,7 +70,14 @@ public:
     std::vector<std::uint8_t> jointIds;
     jointIds.reserve(jointIds64.size());
     for (const auto id : jointIds64) {
-      jointIds.push_back(static_cast<std::uint8_t>(std::clamp<int64_t>(id, 0, 255)));
+      const auto clamped = std::clamp<int64_t>(id, 0, 255);
+      if (clamped != id) {
+        RCLCPP_WARN(
+          this->get_logger(),
+          "joint id %" PRId64 " out of range [0,255], clamped to %" PRId64,
+          id, clamped);
+      }
+      jointIds.push_back(static_cast<std::uint8_t>(clamped));
     }
 
     auto transport = std::make_shared<myservo::MockTransport>();

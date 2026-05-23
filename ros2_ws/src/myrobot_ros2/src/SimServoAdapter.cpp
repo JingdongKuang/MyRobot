@@ -3,11 +3,12 @@
 #include <algorithm>
 #include <cmath>
 #include <functional>
+#include <numbers>
 #include <stdexcept>
 
 namespace
 {
-constexpr double kPi = 3.14159265358979323846;
+constexpr double kPi = std::numbers::pi_v<double>;
 constexpr double kServoMinRad = -kPi;
 constexpr double kServoMaxRad = kPi;
 constexpr double kServoMaxCount = 1023.0;
