@@ -52,6 +52,24 @@ public:
     const auto pidKi = this->get_parameter("pid_ki").as_double();
     const auto pidKd = this->get_parameter("pid_kd").as_double();
 
+    const auto effectivePlannerNumSegments = std::clamp(plannerNumSegments, 1, 10000);
+    if (effectivePlannerNumSegments != plannerNumSegments) {
+      RCLCPP_WARN(
+        this->get_logger(),
+        "planner_num_segments=%d out of range [1,10000], clamped to %d",
+        plannerNumSegments, effectivePlannerNumSegments);
+    }
+
+    if (pidKp < 0.0 || pidKi < 0.0 || pidKd < 0.0) {
+      RCLCPP_WARN(
+        this->get_logger(),
+        "PID gains contain negative values (kp=%.3f, ki=%.3f, kd=%.3f)",
+        pidKp, pidKi, pidKd);
+    }
+    if (pidKp == 0.0 && pidKi == 0.0 && pidKd == 0.0) {
+      RCLCPP_WARN(this->get_logger(), "All PID gains are zero; controller output may remain zero");
+    }
+
     if (jointIds64.empty()) {
       throw std::invalid_argument("joint_ids must not be empty");
     }
@@ -86,7 +104,7 @@ public:
     forceSensor_ = std::make_shared<myexternal::MockForceSensor>();
 
     planner_ = std::make_unique<myplanning::LinearTrajectoryPlanner>(
-      static_cast<std::size_t>(std::max(1, plannerNumSegments)));
+      static_cast<std::size_t>(effectivePlannerNumSegments));
     controller_ = std::make_unique<mycontrol::PIDController>(
       pidKp, pidKi, pidKd, jointIds.size());
     servoAdapter_ =

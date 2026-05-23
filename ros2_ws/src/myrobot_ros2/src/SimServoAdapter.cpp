@@ -57,7 +57,7 @@ std::uint16_t SimServoAdapter::RadToServoPosition(double rad)
   const auto clamped = std::clamp(rad, kServoMinRad, kServoMaxRad);
   const auto normalized = (clamped - kServoMinRad) / (kServoMaxRad - kServoMinRad);
   const auto value = normalized * kServoMaxCount;
-  return static_cast<std::uint16_t>(std::llround(value));
+  return static_cast<std::uint16_t>(std::lround(value));
 }
 
 double SimServoAdapter::ServoPositionToRad(std::uint16_t position)
