@@ -208,7 +208,7 @@ docker compose up
 ## 启动流程示意
 
 ```bash
-git clone https://github.com/JingdongKuang/MyRobot.git
+git clone <repository-url>
 cd MyRobot
 docker compose up --build
 ```
