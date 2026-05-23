@@ -1,2 +1,0 @@
-/usr/bin/ar qc libplanning.a CMakeFiles/planning.dir/Planner.cpp.o CMakeFiles/planning.dir/TrajectoryPlanner.cpp.o
-/usr/bin/ranlib libplanning.a

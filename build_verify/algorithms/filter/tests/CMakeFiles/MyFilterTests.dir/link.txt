@@ -1,1 +1,0 @@
-/usr/bin/c++ -Wl,--dependency-file=CMakeFiles/MyFilterTests.dir/link.d CMakeFiles/MyFilterTests.dir/filterTests.cpp.o -o MyFilterTests  ../libmyfilter.a

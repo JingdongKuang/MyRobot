@@ -1,2 +1,0 @@
-/usr/bin/ar qc librobot_model.a CMakeFiles/robot_model.dir/RobotModel.cpp.o CMakeFiles/robot_model.dir/URDFLoader.cpp.o
-/usr/bin/ranlib librobot_model.a
