@@ -17,6 +17,7 @@ option(BUILD_SERVO_TESTS "Build servo tests" ON)
 option(BUILD_ROBOT_MODEL "Build robot_model library" ON)
 option(BUILD_ALGORITHMS "Build algorithms (planning + control) libraries" ON)
 option(BUILD_EXTERNAL "Build external adapters (servo_interface + force_sensor)" ON)
+option(BUILD_ROS2 "Build ROS2 integration package" OFF)
 
 if (BUILD_MYFILTER_TESTS OR BUILD_SERVO_TESTS)
   enable_testing()
@@ -40,6 +41,10 @@ add_subdirectory("algorithms")
 
 # 外部硬件对接层（伺服适配 + 力传感器）
 add_subdirectory("external")
+
+if (BUILD_ROS2 AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/ros2_ws/src/myrobot_ros2/CMakeLists.txt")
+  add_subdirectory("ros2_ws/src/myrobot_ros2")
+endif()
 
 if (BUILD_APP)
   # 将源代码添加到此项目的可执行文件。
