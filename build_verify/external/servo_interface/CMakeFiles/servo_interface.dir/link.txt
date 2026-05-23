@@ -1,0 +1,2 @@
+/usr/bin/ar qc libservo_interface.a CMakeFiles/servo_interface.dir/ServoInterface.cpp.o
+/usr/bin/ranlib libservo_interface.a

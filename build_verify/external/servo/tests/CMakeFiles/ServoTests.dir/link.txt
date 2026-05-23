@@ -1,0 +1,1 @@
+/usr/bin/c++ -Wl,--dependency-file=CMakeFiles/ServoTests.dir/link.d CMakeFiles/ServoTests.dir/servoTests.cpp.o -o ServoTests  ../libservo.a

@@ -1,0 +1,2 @@
+/usr/bin/ar qc libservo.a CMakeFiles/servo.dir/MockTransport.cpp.o CMakeFiles/servo.dir/ServoController.cpp.o
+/usr/bin/ranlib libservo.a

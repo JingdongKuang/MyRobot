@@ -37,11 +37,19 @@ public:
     this->declare_parameter<std::vector<std::string>>("joint_names", defaultNames);
     this->declare_parameter<int>("control_period_ms", 20);
     this->declare_parameter<std::string>("force_frame_id", "tool0");
+    this->declare_parameter<int>("planner_num_segments", 20);
+    this->declare_parameter<double>("pid_kp", 0.8);
+    this->declare_parameter<double>("pid_ki", 0.0);
+    this->declare_parameter<double>("pid_kd", 0.0);
 
     const auto jointIds64 = this->get_parameter("joint_ids").as_integer_array();
     auto jointNames = this->get_parameter("joint_names").as_string_array();
     const auto controlPeriodMs = this->get_parameter("control_period_ms").as_int();
     const auto forceFrameId = this->get_parameter("force_frame_id").as_string();
+    const auto plannerNumSegments = this->get_parameter("planner_num_segments").as_int();
+    const auto pidKp = this->get_parameter("pid_kp").as_double();
+    const auto pidKi = this->get_parameter("pid_ki").as_double();
+    const auto pidKd = this->get_parameter("pid_kd").as_double();
 
     if (jointIds64.empty()) {
       throw std::invalid_argument("joint_ids must not be empty");
@@ -66,8 +74,10 @@ public:
     servoInterface_ = std::make_shared<myexternal::ServoInterface>(servoController, jointIds);
     forceSensor_ = std::make_shared<myexternal::MockForceSensor>();
 
-    planner_ = std::make_unique<myplanning::LinearTrajectoryPlanner>(20);
-    controller_ = std::make_unique<mycontrol::PIDController>(0.8, 0.0, 0.0, jointIds.size());
+    planner_ = std::make_unique<myplanning::LinearTrajectoryPlanner>(
+      static_cast<std::size_t>(std::max(1, plannerNumSegments)));
+    controller_ = std::make_unique<mycontrol::PIDController>(
+      pidKp, pidKi, pidKd, jointIds.size());
     servoAdapter_ =
       std::make_unique<myrobot_ros2::SimServoAdapter>(*this, servoInterface_, std::move(jointNames));
     forceAdapter_ =
