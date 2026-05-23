@@ -29,23 +29,17 @@ endif()
 
 # 底层基础库
 add_subdirectory("math")
-add_subdirectory("algorithms/filter")
-add_subdirectory("external/servo")
 
 # 机器人机械模型（关节、连杆、URDF 导入等）
 if (BUILD_ROBOT_MODEL OR BUILD_ALGORITHMS)
   add_subdirectory("robot_model")
 endif()
 
-# 算法层（规划 + 控制）
-if (BUILD_ALGORITHMS)
-  add_subdirectory("algorithms")
-endif()
+# 算法层（滤波 + 规划 + 控制）
+add_subdirectory("algorithms")
 
 # 外部硬件对接层（伺服适配 + 力传感器）
-if (BUILD_EXTERNAL)
-  add_subdirectory("external")
-endif()
+add_subdirectory("external")
 
 if (BUILD_APP)
   # 将源代码添加到此项目的可执行文件。
