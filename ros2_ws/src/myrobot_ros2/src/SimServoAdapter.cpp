@@ -61,8 +61,7 @@ std::uint16_t SimServoAdapter::RadToServoPosition(double rad)
 
 double SimServoAdapter::ServoPositionToRad(std::uint16_t position)
 {
-  const double normalized =
-    static_cast<double>(position) / std::max(1.0, kServoMaxCount);
+  const double normalized = static_cast<double>(position) / kServoMaxCount;
   return kServoMinRad + normalized * (kServoMaxRad - kServoMinRad);
 }
 

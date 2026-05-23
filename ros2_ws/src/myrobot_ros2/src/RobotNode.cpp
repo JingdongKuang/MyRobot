@@ -57,9 +57,7 @@ public:
     if (jointNames.size() != jointIds64.size()) {
       jointNames.resize(jointIds64.size());
       for (std::size_t i = 0; i < jointNames.size(); ++i) {
-        if (jointNames[i].empty()) {
-          jointNames[i] = "joint" + std::to_string(i + 1);
-        }
+        jointNames[i] = "joint" + std::to_string(i + 1);
       }
     }
 
@@ -99,7 +97,7 @@ public:
       period,
       [this, dt]() { this->OnControlTick(dt); });
 
-    RCLCPP_INFO(this->get_logger(), "myrobot_node started with %zu joints", servoInterface_->JointCount());
+    RCLCPP_INFO(this->get_logger(), "%s started with %zu joints", this->get_name(), servoInterface_->JointCount());
   }
 
   ~RobotNode() override
