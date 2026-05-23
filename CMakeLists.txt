@@ -29,8 +29,8 @@ endif()
 
 # 底层基础库
 add_subdirectory("math")
-add_subdirectory("myFilter")
-add_subdirectory("servo")
+add_subdirectory("algorithms/filter")
+add_subdirectory("external/servo")
 
 # 机器人机械模型（关节、连杆、URDF 导入等）
 if (BUILD_ROBOT_MODEL OR BUILD_ALGORITHMS)
